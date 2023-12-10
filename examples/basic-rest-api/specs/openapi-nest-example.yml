@@ -1,0 +1,144 @@
+openapi: 3.0.3
+info:
+  title: openapi-nest-example
+  version: 1.0.0
+servers:
+  - url: "{protocol}://{host}/{prefix}"
+    variables:
+      prefix:
+        default: api
+      protocol:
+        enum:
+          - http
+          - https
+        default: http
+      host:
+        enum:
+          - localhost:3000
+        default: localhost:3000
+paths:
+  /health:
+    $ref: "../node_modules/openapi-nest/openapi.yml#/paths/~1health"
+  /version:
+    $ref: "../node_modules/openapi-nest/openapi.yml#/paths/~1version"
+  /drivers/search/{id}:
+    get:
+      tags:
+        - driver
+      operationId: getDriverById
+      x-openapi-nest-controller: drivers
+      x-openapi-nest-controller-path-segment: drivers
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Get a driver
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DriverResponse"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GlobalErrorResponse"
+      security:
+        - cognito: []
+  /drivers:
+    get:
+      tags:
+        - driver
+      operationId: getAllDrivers
+      x-openapi-nest-controller: drivers
+      x-openapi-nest-controller-path-segment: drivers
+      responses:
+        "200":
+          description: Get all drivers
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DriverListResponse"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GlobalErrorResponse"
+      security:
+        - cognito: []
+  /drivers/search:
+    get:
+      tags:
+        - driver
+      parameters:
+        - name: term
+          in: query
+          required: true
+          schema:
+            type: string
+      operationId: searchDrivers
+      x-openapi-nest-controller: drivers
+      x-openapi-nest-controller-path-segment: drivers
+      responses:
+        "200":
+          description: Search drivers by name
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DriverListResponse"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GlobalErrorResponse"
+      security:
+        - cognito: []
+components:
+  securitySchemes:
+    cognito:
+      type: apiKey
+      name: Authorization
+      in: header
+  schemas:
+    DriverListResponse:
+      title: DriverListResponse
+      type: object
+      properties:
+        drivers:
+          type: array
+          items:
+            $ref: "#/components/schemas/DriverResponse"
+      required:
+        - drivers
+    DriverResponse:
+      title: DriverResponse
+      type: object
+      properties:
+        driverId:
+          type: string
+        firstname:
+          type: string
+        lastname:
+          type: string
+      required:
+        - driverId
+        - firstname
+        - lastname
+    GlobalErrorResponse:
+      title: GlobalErrorResponse
+      type: object
+      properties:
+        error:
+          type: string
+          nullable: false
+        message:
+          type: string
+          nullable: false
+      required:
+        - error

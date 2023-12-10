@@ -1,0 +1,44 @@
+openapi: 3.0.3
+paths:
+  /health:
+    get:
+      tags:
+        - api-info
+      operationId: openapiNestHealth
+      responses:
+        "200":
+          description: Get health indicators
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OpenapiNestHealthResponse"
+  /version:
+    get:
+      tags:
+        - api-info
+      operationId: openapiNestVersion
+      responses:
+        "200":
+          description: Get api version
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OpenapiNestVersionResponse"
+components:
+  schemas:
+    OpenapiNestHealthResponse:
+      title: OpenapiNestHealthResponse
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+    OpenapiNestVersionResponse:
+      title: OpenapiNestVersionResponse
+      type: object
+      properties:
+        version:
+          type: string
+      required:
+        - version
