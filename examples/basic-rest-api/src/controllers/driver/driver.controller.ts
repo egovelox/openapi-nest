@@ -4,8 +4,7 @@ import {
   Controller,
   NotFoundException,
   Param,
-  UploadedFile,
-  UseInterceptors,
+  Request,
 } from "@nestjs/common";
 import {
   AddDriverImage,
@@ -19,7 +18,6 @@ import {
   searchDrivers,
 } from "../../generated/openapi.types";
 import { Express } from "express";
-import { FileInterceptor } from "@nestjs/platform-express";
 
 const driversDB = [
   { driverId: "1", firstname: "Enzo", lastname: "Ferrari" },
@@ -59,13 +57,16 @@ export class DriverController {
   }
 
   @addDriverImage
-  @UseInterceptors(FileInterceptor("file"))
   async addDriverImage(
     @Param() params: AddDriverImage["params"],
-    @UploadedFile() file: Express.Multer.File
+    @Request() { files }: Express.Request,
   ): Promise<AddDriverImage["response"]> {
-    console.log('params', params)
-    console.log("file", file);
+    const file = (files as Express.Multer.File[])[0]
+
+    console.log('filename: ', file.originalname)
+    console.log('file size: ', file.size)
+    console.log('file content: ', file.buffer)
+
     return { driver_id: params.id.toString() };
   }
 }
