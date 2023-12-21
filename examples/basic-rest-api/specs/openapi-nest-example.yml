@@ -100,6 +100,52 @@ paths:
                 $ref: "#/components/schemas/GlobalErrorResponse"
       security:
         - cognito: []
+  /drivers/{id}/image:
+    post:
+      tags:
+        - driver
+      operationId: addDriverImage
+      summary: Add a an image or a PDF file.
+      requestBody:
+        description: Body to provide in order to add an image
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+              required:
+                - file
+      parameters:
+        - name: id
+          description: Id of a driver
+          in: path
+          required: true
+          schema:
+            type: number
+      x-openapi-nest-controller: drivers
+      x-openapi-nest-controller-path-segment: drivers
+      responses:
+        "201":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - driver_id
+                properties:
+                  driver_id:
+                    type: string
+        "400":
+          description: Wrong use of the api, please check your params.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GlobalErrorResponse"
 components:
   securitySchemes:
     cognito:

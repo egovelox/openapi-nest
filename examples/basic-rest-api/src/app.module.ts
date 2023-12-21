@@ -15,11 +15,12 @@ export class AppModule {
       openapiValidatorOptions: {
         validateRequests: true,
         validateResponses: true,
+        fileUploader: false,
       },
     });
     consumer
       .apply(...validators)
-      //.exclude(...["drivers/search", "drivers/search/:id"])
+      .exclude(...["drivers/:id/image"])
       .forRoutes("*");
   }
 }

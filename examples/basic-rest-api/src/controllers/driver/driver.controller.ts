@@ -1,6 +1,15 @@
 import { User, UserInfo } from "openapi-nest";
-import { Body, Controller, NotFoundException, Param } from "@nestjs/common";
 import {
+  Body,
+  Controller,
+  NotFoundException,
+  Param,
+  UploadedFile,
+  UseInterceptors,
+} from "@nestjs/common";
+import {
+  AddDriverImage,
+  addDriverImage,
   Controllers,
   GetAllDrivers,
   getAllDrivers,
@@ -9,6 +18,8 @@ import {
   SearchDrivers,
   searchDrivers,
 } from "../../generated/openapi.types";
+import { Express } from "express";
+import { FileInterceptor } from "@nestjs/platform-express";
 
 const driversDB = [
   { driverId: "1", firstname: "Enzo", lastname: "Ferrari" },
@@ -45,5 +56,16 @@ export class DriverController {
           new RegExp(`${body.searchTerm}`).test(d.lastname)
       ),
     };
+  }
+
+  @addDriverImage
+  @UseInterceptors(FileInterceptor("file"))
+  async addDriverImage(
+    @Param() params: AddDriverImage["params"],
+    @UploadedFile() file: Express.Multer.File
+  ): Promise<AddDriverImage["response"]> {
+    console.log('params', params)
+    console.log("file", file);
+    return { driver_id: params.id.toString() };
   }
 }
