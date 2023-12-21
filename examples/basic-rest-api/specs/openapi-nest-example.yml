@@ -72,16 +72,17 @@ paths:
       security:
         - cognito: []
   /drivers/search:
-    get:
+    post:
       tags:
         - driver
-      parameters:
-        - name: term
-          in: query
-          required: true
-          schema:
-            type: string
       operationId: searchDrivers
+      requestBody:
+        description: Body to search drivers
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SearchDriversRequestBody"
       x-openapi-nest-controller: drivers
       x-openapi-nest-controller-path-segment: drivers
       responses:
@@ -130,6 +131,20 @@ components:
         - driverId
         - firstname
         - lastname
+    SearchDriversRequestBody:
+      title: SearchDriversRequestBody
+      type: object
+      properties:
+        searchTerm:
+          type: string
+          minLength: 3
+          #pattern: ^Sen$
+        #creationDate:
+          #type: string
+          #format: email
+      required:
+        - searchTerm
+        #- creationDate
     GlobalErrorResponse:
       title: GlobalErrorResponse
       type: object

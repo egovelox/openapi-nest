@@ -1,5 +1,5 @@
 import { User, UserInfo } from "openapi-nest";
-import { Controller, NotFoundException, Param, Query } from "@nestjs/common";
+import { Body, Controller, NotFoundException, Param } from "@nestjs/common";
 import {
   Controllers,
   GetAllDrivers,
@@ -36,15 +36,13 @@ export class DriverController {
 
   @searchDrivers
   async SearchDrivers(
-    @User() user: UserInfo,
-    @Query() query: SearchDrivers["query"]
+    @Body() body: SearchDrivers["requestBody"]
   ): Promise<SearchDrivers["response"]> {
-    console.log(user.userId);
     return {
       drivers: driversDB.filter(
         (d) =>
-          new RegExp(`${query.term}`).test(d.firstname) ||
-          new RegExp(`${query.term}`).test(d.lastname)
+          new RegExp(`${body.searchTerm}`).test(d.firstname) ||
+          new RegExp(`${body.searchTerm}`).test(d.lastname)
       ),
     };
   }

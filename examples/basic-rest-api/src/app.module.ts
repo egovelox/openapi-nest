@@ -17,6 +17,9 @@ export class AppModule {
         validateResponses: true,
       },
     });
-    consumer.apply(...validators).forRoutes("*");
+    consumer
+      .apply(...validators)
+      //.exclude(...["drivers/search", "drivers/search/:id"])
+      .forRoutes("*");
   }
 }

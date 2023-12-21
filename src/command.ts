@@ -24,7 +24,7 @@ const transformationService = new TransformationService(
 
 typesGenerationService
   .validateOpenapiFile()
-  .then(typesGenerationService.generateTsTypes)
+  .then((_) => typesGenerationService.generateTsTypes())
   .then((result) => console.info(result))
-  .then(transformationService.transformOpenapiFile)
+  .then((_) => transformationService.transformOpenapiFile())
   .then((result) => console.info(result));
