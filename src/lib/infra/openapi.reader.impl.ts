@@ -27,7 +27,8 @@ export class OpenapiReaderImpl implements OpenapiReader {
   }
 
   async validateDocument(document: OpenAPIV3.Document): Promise<void> {
-    await SwaggerParser.validate(document, { resolve: { external: true } });
+    const clonedDocument = JSON.parse(JSON.stringify(document))
+    await SwaggerParser.validate(clonedDocument, { resolve: { external: true } });
     const api = (await SwaggerParser.parse(document)) as OpenAPIV3.Document;
     if (typeof api.openapi === undefined || !/^3\.0./.test(api.openapi)) {
       throw Error(`Error validating document : openapi version must be >= 3.0.x`);
@@ -36,7 +37,7 @@ export class OpenapiReaderImpl implements OpenapiReader {
 
   async read(filePath: string): Promise<OpenAPIV3.Document> {
     await this.validateFile(filePath);
-    return (await SwaggerParser.dereference(filePath)) as OpenAPIV3.Document;
+    return (await SwaggerParser.bundle(filePath)) as OpenAPIV3.Document;
   }
 
   async collectOperations(filePath: string): Promise<OpenapiSchemaObjects> {
